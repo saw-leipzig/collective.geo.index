@@ -37,9 +37,7 @@ setup(name='collective.geo.index',
           'Products.CMFPlone',
           'shapely',
           'Rtree',
-          'collective.geo.contentlocations',
-          'collective.geo.mapwidget',
-          'collective.geo.kml',
+          'collective.geo.geographer'
       ],
       entry_points="""
       # -*- Entry points: -*-

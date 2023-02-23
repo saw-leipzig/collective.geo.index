@@ -38,7 +38,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.browser.navtree import getNavigationRoot
 
 from Products.CMFPlone.interfaces import IPloneSiteRoot
-from Products.ATContentTypes.interfaces.topic import IATTopic
 
 def quotestring(s):
     return '"%s"' % s

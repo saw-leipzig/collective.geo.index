@@ -29,4 +29,5 @@
   <!-- Register the upgrade step -->
 
 
+  <adapter factory=".geometryindex.GeometryIndexQueryParser" />
 </configure>

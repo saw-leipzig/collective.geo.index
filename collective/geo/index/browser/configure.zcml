@@ -15,7 +15,7 @@
     permission="zope.Public"
     />
 
-  <adapter
+ <!--  <adapter
       for=".query.ISearchView
            zope.interface.Interface
            zope.interface.Interface
@@ -31,7 +31,7 @@
       allowed_interface=".kmlview.IKmlView"
       permission="zope2.View"
       />
-
+ -->
 
 
 </configure>

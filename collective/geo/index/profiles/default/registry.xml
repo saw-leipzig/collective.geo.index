@@ -1,0 +1,77 @@
+<registry xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  i18n:domain="plone">
+
+  <records interface="plone.app.querystring.interfaces.IQueryOperation"
+   prefix="plone.app.querystring.operation.geometric.intersects">
+   <value key="title" i18n:translate="">intersects</value>
+   <value key="description" i18n:translate=""></value>
+   <value key="operation">collective.geo.index.querystringparser._intersects</value>
+   <value key="widget">StringWidget</value>
+ </records>    
+
+ <records interface="plone.app.querystring.interfaces.IQueryOperation"
+   prefix="plone.app.querystring.operation.geometric.equals">
+   <value key="title" i18n:translate="">equals</value>
+   <value key="description" i18n:translate=""></value>
+   <value key="operation">collective.geo.index.querystringparser._equals</value>
+   <value key="widget">StringWidget</value>
+ </records>  
+
+ <records interface="plone.app.querystring.interfaces.IQueryOperation"
+   prefix="plone.app.querystring.operation.geometric.touches">
+   <value key="title" i18n:translate="">touches</value>
+   <value key="description" i18n:translate=""></value>
+   <value key="operation">collective.geo.index.querystringparser._touches</value>
+   <value key="widget">StringWidget</value>
+ </records>  
+
+ <records interface="plone.app.querystring.interfaces.IQueryOperation"
+   prefix="plone.app.querystring.operation.geometric.crosses">
+   <value key="title" i18n:translate="">crosses</value>
+   <value key="description" i18n:translate=""></value>
+   <value key="operation">collective.geo.index.querystringparser._crosses</value>
+   <value key="widget">StringWidget</value>
+ </records>  
+
+ <records interface="plone.app.querystring.interfaces.IQueryOperation"
+   prefix="plone.app.querystring.operation.geometric.within">
+   <value key="title" i18n:translate="">within</value>
+   <value key="description" i18n:translate=""></value>
+   <value key="operation">collective.geo.index.querystringparser._within</value>
+   <value key="widget">StringWidget</value>
+ </records>  
+
+ <records interface="plone.app.querystring.interfaces.IQueryOperation"
+   prefix="plone.app.querystring.operation.geometric.contains">
+   <value key="title" i18n:translate="">contains</value>
+   <value key="description" i18n:translate=""></value>
+   <value key="operation">collective.geo.index.querystringparser._contains</value>
+   <value key="widget">StringWidget</value>
+ </records>
+
+ <records interface="plone.app.querystring.interfaces.IQueryOperation"
+   prefix="plone.app.querystring.operation.geometric.overlaps">
+   <value key="title" i18n:translate="">overlaps</value>
+   <value key="description" i18n:translate=""></value>
+   <value key="operation">collective.geo.index.querystringparser._overlaps</value>
+   <value key="widget">StringWidget</value>
+ </records>
+
+ <records interface="plone.app.querystring.interfaces.IQueryField"
+   prefix="plone.app.querystring.field.zgeo_geometry">
+   <value key="title">zgeo_geometry</value>
+   <value key="description">bounding box (xmin, ymin, xmax, ymax</value>
+   <value key="enabled">True</value>
+   <value key="sortable">True</value>
+   <value key="operations">
+     <element>plone.app.querystring.operation.geometric.equals</element>
+     <element>plone.app.querystring.operation.geometric.intersects</element>
+     <element>plone.app.querystring.operation.geometric.touches</element>
+     <element>plone.app.querystring.operation.geometric.crosses</element>
+     <element>plone.app.querystring.operation.geometric.within</element>
+     <element>plone.app.querystring.operation.geometric.contains</element>
+     <element>plone.app.querystring.operation.geometric.overlaps</element>
+   </value>
+   <value key="group">GeoArea</value>
+ </records>
+</registry>

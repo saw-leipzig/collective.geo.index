@@ -9,7 +9,8 @@ from OFS.PropertyManager import PropertyManager
 from zope.interface import implementer
 from zope.interface import Interface
 from zope.component import adapter
-from Products.PluginIndexes.common.util import parseIndexRequest
+#from Products.PluginIndexes.common.util import parseIndexRequest
+from Products.ZCatalog.query import IndexQuery as parseIndexRequest
 from Products.PluginIndexes.interfaces import IPluggableIndex
 from Products.PluginIndexes.interfaces import ISortIndex
 from Products.PluginIndexes.interfaces import IUniqueValueIndex
@@ -49,23 +50,20 @@ class GeometryIndex(SimpleItem, BaseIndex, PropertyManager):
     """Index for geometry attribute provided by IGeoManager adapter
     """
 
-    meta_type="GeometryIndex"
+    meta_type = "GeometryIndex"
 
-    query_options = ('query','geometry_operator')
+    query_options = ('query', 'geometry_operator')
 
     manage_browse = DTMLFile('dtml/browseGeometryIndex', globals())
 
     manage_main = DTMLFile('dtml/manageGeometryIndex', globals())
 
-    manage_options= (
+    manage_options = (
         {'label': 'Settings',
          'action': 'manage_main'},
         {'label': 'Browse',
          'action': 'manage_browse'},
     )
-
-
-
 
     def __init__(self, id):
         self.id = id
@@ -84,7 +82,6 @@ class GeometryIndex(SimpleItem, BaseIndex, PropertyManager):
         """
         return self.backward.get(documentId, default)
 
-
     def index_object(self, documentId, obj, threshold=None):
         """index an object, normalizing the indexed value to its bounds
 
@@ -95,19 +92,26 @@ class GeometryIndex(SimpleItem, BaseIndex, PropertyManager):
         'obj' is the object to be indexed.
         """
         returnStatus = 0
-        try:
-            geoitem_wkt = shape(IGeoreferenced(obj).geo).wkt
-        except:
-            return 0
-        if geoitem_wkt:
-            geometry = wkt.loads(geoitem_wkt)
-        else:
-            geometry = None
-        if IGeoreferenceable.providedBy(obj) and IGeoreferenced(obj).coordinates:
+        if IGeoreferenceable.providedBy(obj):
+            try:
+                geo_obj = IGeoreferenced(obj)
+                if geo_obj.coordinates:
+                    geometry = shape(geo_obj.geo)
+                    geoitem_wkt = geometry.wkt
+                else:
+                    geometry = None
+                    geoitem_wkt = _marker
+            except Exception as e:
+                logger.error(e)
+                logger.error(str(obj))
+                return 0
+
+            logger.debug("INDEX docId {0}; obj {1}; wkt {2}".format(documentId, str(obj), geoitem_wkt))
             newValue = geoitem_wkt
             if newValue is callable:
                 newValue = newValue()
-            oldValue = self.backward.get(documentId, _marker )
+
+            oldValue = self.backward.get(documentId, _marker)
 
             if newValue is _marker:
                 if oldValue is not _marker:
@@ -116,10 +120,10 @@ class GeometryIndex(SimpleItem, BaseIndex, PropertyManager):
                         del self.backward[documentId]
                     # except ConflictError:
                     #     raise
-                    except:
+                    except Exception:
                         pass
             else:
-                if oldValue is not _marker and newValue!=oldValue:
+                if oldValue is not _marker and newValue != oldValue:
                     self.rtree.delete(documentId, wkt.loads(oldValue).bounds)
                 if geometry:
                     self.rtree.add(documentId, geometry.bounds)
@@ -129,11 +133,12 @@ class GeometryIndex(SimpleItem, BaseIndex, PropertyManager):
 
         return returnStatus
 
-    def unindex_object( self, documentId ):
+    def unindex_object(self, documentId):
         """
             Remove the object corresponding to 'documentId' from the index.
         """
-        datum = self.backward.get( documentId, None )
+        logger.debug("UNiNDEX docId {0}".format(documentId))
+        datum = self.backward.get(documentId, None)
 
         if datum is None:
             return
@@ -143,7 +148,7 @@ class GeometryIndex(SimpleItem, BaseIndex, PropertyManager):
             del self.backward[documentId]
         # except ConflictError:
         #     raise
-        except:
+        except Exception:
             logger.debug('Attempt to unindex nonexistent document'
                       ' with id %s' % documentId, exc_info=True)
 
@@ -171,7 +176,7 @@ class GeometryIndex(SimpleItem, BaseIndex, PropertyManager):
         for d in [l for l in intersection]:
             try:
                 geom_wkt = self.backward.get(int(d), None)
-            except:
+            except Exception:
                 logger.info('backward.get failed for %s : %s' %(str(d), str(int(d))))
                 continue
 
@@ -184,7 +189,6 @@ class GeometryIndex(SimpleItem, BaseIndex, PropertyManager):
                         set.append(int(d))
 
         r = IITreeSet(set)
-        #import pdb; pdb.set_trace()
         return r, (self.id,)
 
     def destroy_spatialindex(self):
@@ -203,7 +207,7 @@ manage_addGeometryIndexForm = DTMLFile('dtml/addGeometryIndex', globals())
 
 def manage_addGeometryIndex(self, id, REQUEST=None, RESPONSE=None, URL3=None):
     """Add a DateDate index"""
-    return self.manage_addIndex(id, 'GeometryIndex', extra=None, 
+    return self.manage_addIndex(id, 'GeometryIndex', extra=None,
         REQUEST=REQUEST, RESPONSE=RESPONSE, URL1=URL3)
 
 
